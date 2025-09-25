@@ -1,0 +1,31 @@
+Students:
+(studentid, firstname, lastname, year, favoritemovieid)
+(001, John, Doe, Freshman, 002)
+(002, Willem, Lessig, Junior, 003)
+
+StudentEmails:
+(emailid, studentid, email)
+(001, 001, johndoe@gmail.com)
+(002, 001, jd1234@nyu.edu)
+(003, 002, willem@lessig.org)
+(004, 002, wdn2012@nyu.edu)
+
+Movies:
+(movieid, title, releaseyear, rating, synopsis)
+(001, Fast and Furious 100, 2028, 2.3, "Car go boom")
+(002, Minions the rise of Minions, 2027, 9.8, "Banana")
+(003, SpaceBalls 2, 2027, 5, "Give us money please")
+
+Relationship Sets:
+
+Actors: 
+(actorid, firstname, lastname, url)
+(001, Chris, Hemsworth, chris-site.com)
+(Dwayne, Therock, rock.com)
+
+Saw:
+(sawid, studentid, movieid, starrating, comment, datewatched)
+(001, 001, 001, 5, "Big boom go good", 2028)
+
+AppearsIn:
+(001, 001, 001, "Guy who drives car")
