@@ -1,0 +1,142 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table Airport {
+  airport_code string [pk]
+  city string
+  country string
+  airport_type string [note: 'domestic/international/both']
+}
+
+Table Airline {
+  name string [pk]
+}
+
+Table Airplane {
+  airline_name string [not null]
+  id_number int [note: 'unique within airline']
+  num_seats int
+  manufacturer string
+  age int
+  
+  indexes {
+    (airline_name, id_number) [pk]
+  }
+  
+  Note: 'Weak entity - depends on Airline'
+}
+
+Table Flight {
+  airline_name string [not null]
+  flight_number int
+  departure_airport string [not null]
+  departure_date date
+  departure_time time
+  arrival_airport string [not null]
+  arrival_date date
+  arrival_time time
+  base_price decimal
+  airplane_airline string
+  airplane_id int
+  
+  indexes {
+    (airline_name, flight_number, departure_date, departure_time) [pk]
+  }
+  
+  Note: 'Weak entity - depends on Airline. Non-stop flights only.'
+}
+
+Table Customer {
+  customer_email string [pk]
+  name string [not null]
+  password string [not null]
+  building_number int [note: 'Part of Address composite']
+  street string [note: 'Part of Address composite']
+  city string [note: 'Part of Address composite']
+  state string [note: 'Part of Address composite']
+  phone_number string
+  passport_number string
+  passport_expiration date
+  passport_country string
+  date_of_birth date
+}
+
+Table AirlineStaff {
+  username string [pk]
+  password string [not null]
+  name_first string [not null]
+  name_last string [not null]
+  date_of_birth date
+  airline_name string [not null]
+  email string [not null]
+  
+  Note: 'Each staff member works for exactly one airline'
+}
+
+Table Phone {
+  staff_username string [not null]
+  phone_number string
+  
+  indexes {
+    (staff_username, phone_number) [pk]
+  }
+  
+  Note: 'Weak entity - staff can have multiple phone numbers'
+}
+
+Table Ticket {
+  ticket_id int [pk]
+  customer_email string [not null]
+  flight_airline string
+  flight_number int
+  flight_departure_date date
+  flight_departure_time time
+  card_type string [note: 'credit/debit']
+  card_number string
+  card_name string
+  card_expiry date
+  purchase_date date [not null]
+  purchase_time time [not null]
+  
+  Note: 'Customer must be logged in to purchase. Purchase only allowed if seats available.'
+}
+
+Table Review {
+  customer_email string [not null]
+  flight_airline string
+  flight_number int
+  flight_departure_date date
+  flight_departure_time time
+  rating int
+  comment text
+  review_date timestamp
+  
+  indexes {
+    (customer_email, flight_airline, flight_number, flight_departure_date, flight_departure_time) [pk]
+  }
+  
+  Note: 'Customer can rate and comment on previous flights'
+}
+
+// Relationship Labels
+Ref owns: Airline.name < Airplane.airline_name
+
+Ref operates: Airline.name < Flight.airline_name
+
+Ref departs_from: Flight.departure_airport > Airport.airport_code
+
+Ref arrives_to: Flight.arrival_airport > Airport.airport_code
+
+Ref flies: Airplane.(airline_name, id_number) < Flight.(airplane_airline, airplane_id)
+
+Ref purchases: Customer.customer_email < Ticket.customer_email
+
+Ref books: Ticket.(flight_airline, flight_number, flight_departure_date, flight_departure_time) > Flight.(airline_name, flight_number, departure_date, departure_time)
+
+Ref reviews: Customer.customer_email < Review.customer_email
+
+Ref rates: Review.(flight_airline, flight_number, flight_departure_date, flight_departure_time) > Flight.(airline_name, flight_number, departure_date, departure_time)
+
+Ref works_for: AirlineStaff.airline_name > Airline.name
+
+Ref has_phones: AirlineStaff.username < Phone.staff_username
