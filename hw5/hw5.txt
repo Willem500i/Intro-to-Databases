@@ -1,0 +1,41 @@
+Question 1: Super Keys and Candidate Keys
+
+Super keys: {city_name, state} and {city_name, state, mayor}
+- {city_name} alone is not a super key because two cities in different states can have the same name
+- {state} alone is not a super key because multiple cities exist in the same state
+- {city_name, state} is a super key because cities in the same state must have different names
+
+Candidate key: {city_name, state}
+- This is the only candidate key because it is minimal (removing either attribute makes it not a super key)
+
+Question 2: Updates for NY Governor Change
+
+Answer: 1000 rows
+Since the governor is stored in every row for NY cities, all 1000 rows would need to be updated when NY gets a new governor.
+
+Question 3: Trivial Functional Dependency
+
+Answer: {city_name, state} → {city_name}
+This is trivial because city_name appears on both sides of the dependency.
+
+Question 4: Non-Trivial FD with Superkey on Left
+
+Answer: {city_name, state} → {governor}
+This is non-trivial and {city_name, state} is a superkey (the candidate key).
+
+Question 5: Non-Trivial FD with Non-Superkey on Left
+
+Answer: {state} → {governor}
+This is non-trivial because each state has exactly one governor, but {state} is not a superkey because multiple cities can be in the same state.
+
+Question 6: Decompose into BCNF
+
+R1: City(city_name, state, mayor)
+R2: State(state, governor)
+
+The problematic FD {state} → {governor} violated BCNF in the original schema. By separating governor into its own relation with state as the key, both relations are now in BCNF.
+
+Question 7: Updates After BCNF Normalization
+
+Answer: 1 row
+In the BCNF schema, governor is stored only once in the State relation. When NY gets a new governor, only the single row for NY in State(state, governor) needs to be updated.
