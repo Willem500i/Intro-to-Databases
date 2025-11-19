@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Search Flights - Air Ticket Reservation System{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Search Flights</h2>
+    
+    <form method="POST" action="{{ url_for('search_flights') }}">
+        <div class="form-group">
+            <label for="trip_type">Trip Type:</label>
+            <select name="trip_type" id="trip_type">
+                <option value="one-way">One Way</option>
+                <option value="round-trip">Round Trip</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="source">Source (City or Airport Code):</label>
+            <input type="text" name="source" id="source" placeholder="e.g., JFK or New York">
+        </div>
+        
+        <div class="form-group">
+            <label for="destination">Destination (City or Airport Code):</label>
+            <input type="text" name="destination" id="destination" placeholder="e.g., LAX or Los Angeles">
+        </div>
+        
+        <div class="form-group">
+            <label for="departure_date">Departure Date:</label>
+            <input type="date" name="departure_date" id="departure_date">
+        </div>
+        
+        <div class="form-group" id="return_date_group" style="display: none;">
+            <label for="return_date">Return Date:</label>
+            <input type="date" name="return_date" id="return_date">
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Search Flights</button>
+    </form>
+    
+    <script>
+        document.getElementById('trip_type').addEventListener('change', function() {
+            const returnDateGroup = document.getElementById('return_date_group');
+            if (this.value === 'round-trip') {
+                returnDateGroup.style.display = 'block';
+            } else {
+                returnDateGroup.style.display = 'none';
+            }
+        });
+    </script>
+</div>
+{% endblock %}
+

@@ -115,3 +115,4 @@ CREATE TABLE Review (
         REFERENCES Flight(airline_name, flight_number, departure_date, departure_time),
     CHECK (rating >= 1 AND rating <= 5)
 );
+

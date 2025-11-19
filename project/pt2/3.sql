@@ -34,16 +34,16 @@ INSERT INTO Phone (staff_username, phone_number) VALUES
 
 -- Insert Future Flights (some on-time, some delayed)
 INSERT INTO Flight (airline_name, flight_number, departure_airport, departure_date, departure_time,
-                   arrival_airport, arrival_date, arrival_time, base_price, status, airplane_airline, airplane_id) VALUES
+                   arrival_airport, arrival_date, arrival_time, base_price, status, airplane_id) VALUES
 -- Future on-time flights
-('Jet Blue', 101, 'JFK', '2025-12-15', '08:00:00', 'PVG', '2025-12-16', '12:00:00', 850.00, 'on-time', 'Jet Blue', 1),
-('Jet Blue', 102, 'PVG', '2025-12-20', '14:00:00', 'JFK', '2025-12-20', '18:00:00', 900.00, 'on-time', 'Jet Blue', 2),
-('Jet Blue', 103, 'JFK', '2025-12-18', '10:30:00', 'LAX', '2025-12-18', '13:30:00', 350.00, 'on-time', 'Jet Blue', 3),
+('Jet Blue', 101, 'JFK', '2025-12-15', '08:00:00', 'PVG', '2025-12-16', '12:00:00', 850.00, 'on-time', 1),
+('Jet Blue', 102, 'PVG', '2025-12-20', '14:00:00', 'JFK', '2025-12-20', '18:00:00', 900.00, 'on-time', 2),
+('Jet Blue', 103, 'JFK', '2025-12-18', '10:30:00', 'LAX', '2025-12-18', '13:30:00', 350.00, 'on-time', 3),
 -- Future delayed flights
-('Jet Blue', 104, 'LAX', '2025-12-22', '09:00:00', 'JFK', '2025-12-22', '17:00:00', 380.00, 'delayed', 'Jet Blue', 1),
-('Jet Blue', 105, 'JFK', '2025-12-25', '15:00:00', 'PVG', '2025-12-26', '19:00:00', 920.00, 'delayed', 'Jet Blue', 2),
+('Jet Blue', 104, 'LAX', '2025-12-22', '09:00:00', 'JFK', '2025-12-22', '17:00:00', 380.00, 'delayed', 1),
+('Jet Blue', 105, 'JFK', '2025-12-25', '15:00:00', 'PVG', '2025-12-26', '19:00:00', 920.00, 'delayed', 2),
 -- Past flight for reviews
-('Jet Blue', 100, 'JFK', '2025-10-01', '08:00:00', 'LAX', '2025-10-01', '11:00:00', 300.00, 'on-time', 'Jet Blue', 1);
+('Jet Blue', 100, 'JFK', '2025-10-01', '08:00:00', 'LAX', '2025-10-01', '11:00:00', 300.00, 'on-time', 1);
 
 -- Insert Tickets (purchases)
 INSERT INTO Ticket (customer_email, flight_airline, flight_number, flight_departure_date, flight_departure_time,
@@ -59,6 +59,6 @@ INSERT INTO Ticket (customer_email, flight_airline, flight_number, flight_depart
 
 -- Insert Reviews (for past flights)
 INSERT INTO Review (customer_email, flight_airline, flight_number, flight_departure_date, flight_departure_time,
-                   rating, comment, review_date) VALUES
+                   rating, comment) VALUES
 ('john.doe@email.com', 'Jet Blue', 100, '2025-10-01', '08:00:00', 
- 5, 'Excellent flight! Very smooth and comfortable.', '2025-10-02 10:30:00');
+ 5, 'Excellent flight! Very smooth and comfortable.');

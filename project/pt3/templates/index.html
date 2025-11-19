@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="home-page">
+    <h2>Welcome to Air Ticket Reservation System</h2>
+    
+    <div class="features">
+        <div class="feature-card">
+            <h3>Search Flights</h3>
+            <p>Search for flights by source, destination, and dates</p>
+            <a href="{{ url_for('search_flights') }}" class="btn btn-primary">Search Now</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

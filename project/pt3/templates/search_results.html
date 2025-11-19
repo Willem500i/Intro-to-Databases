@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results - Air Ticket Reservation System{% endblock %}
+
+{% block content %}
+<div class="search-results">
+    <h2>Flight Search Results</h2>
+    
+    {% if error %}
+    <div class="flash flash-error">{{ error }}</div>
+    <p>Please check your database connection settings in config.py</p>
+    {% elif flights %}
+    <table class="flight-table">
+        <thead>
+            <tr>
+                <th>Airline</th>
+                <th>Flight #</th>
+                <th>Departure</th>
+                <th>Arrival</th>
+                <th>Date</th>
+                <th>Price</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for flight in flights %}
+            <tr>
+                <td>{{ flight.airline_name }}</td>
+                <td>{{ flight.flight_number }}</td>
+                <td>
+                    {{ flight.departure_airport }} ({{ flight.departure_city }})<br>
+                    {{ flight.departure_time }}
+                </td>
+                <td>
+                    {{ flight.arrival_airport }} ({{ flight.arrival_city }})<br>
+                    {{ flight.arrival_time }}
+                </td>
+                <td>{{ flight.departure_date }}</td>
+                <td>${{ "%.2f"|format(flight.base_price) }}</td>
+                <td>
+                    <span class="status status-{{ flight.status }}">{{ flight.status }}</span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No flights found matching your criteria.</p>
+    {% endif %}
+    
+    <p><a href="{{ url_for('search_flights') }}" class="btn">New Search</a></p>
+</div>
+{% endblock %}
