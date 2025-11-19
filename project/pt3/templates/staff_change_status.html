@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Change Flight Status - Staff{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <h2>Change Flight Status</h2>
+    
+    <div class="dashboard-nav">
+        <a href="{{ url_for('staff_home') }}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+    
+    <h3>Select Flight to Change Status</h3>
+    
+    {% if flights %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Flight Number</th>
+                <th>Route</th>
+                <th>Departure</th>
+                <th>Current Status</th>
+                <th>Change Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for flight in flights %}
+            <tr>
+                <td>{{ flight.airline_name|e }} {{ flight.flight_number }}</td>
+                <td>{{ flight.departure_city|e }} ({{ flight.departure_airport|e }}) → {{ flight.arrival_city|e }} ({{ flight.arrival_airport|e }})</td>
+                <td>{{ flight.departure_date }} {{ flight.departure_time }}</td>
+                <td>
+                    <span class="status status-{{ flight.status|e }}">{{ flight.status|e }}</span>
+                </td>
+                <td>
+                    <form method="POST" style="display: inline;">
+                        <input type="hidden" name="airline" value="{{ flight.airline_name|e }}">
+                        <input type="hidden" name="flight_number" value="{{ flight.flight_number }}">
+                        <input type="hidden" name="departure_date" value="{{ flight.departure_date }}">
+                        <input type="hidden" name="departure_time" value="{{ flight.departure_time }}">
+                        <select name="status" onchange="this.form.submit()">
+                            <option value="on-time" {% if flight.status == 'on-time' %}selected{% endif %}>On-time</option>
+                            <option value="delayed" {% if flight.status == 'delayed' %}selected{% endif %}>Delayed</option>
+                        </select>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No flights found.</p>
+    {% endif %}
+</div>
+{% endblock %}
+

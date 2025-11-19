@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}View Flights - Staff{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <h2>View Flights - {{ session.airline_name|e }}</h2>
+    
+    <div class="dashboard-nav">
+        <a href="{{ url_for('staff_home') }}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+    
+    <h3>Filter Flights</h3>
+    <form method="POST" class="form">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="flight_type">Flight Type:</label>
+                <select id="flight_type" name="flight_type">
+                    <option value="future" {% if flight_type == 'future' %}selected{% endif %}>Future</option>
+                    <option value="past" {% if flight_type == 'past' %}selected{% endif %}>Past</option>
+                    <option value="all" {% if flight_type == 'all' %}selected{% endif %}>All</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="start_date">Start Date:</label>
+                <input type="date" id="start_date" name="start_date" value="{{ start_date }}">
+            </div>
+            
+            <div class="form-group">
+                <label for="end_date">End Date:</label>
+                <input type="date" id="end_date" name="end_date" value="{{ end_date }}">
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="source">Source (Airport/City):</label>
+                <input type="text" id="source" name="source" value="{{ source }}" placeholder="e.g., JFK or New York">
+            </div>
+            
+            <div class="form-group">
+                <label for="destination">Destination (Airport/City):</label>
+                <input type="text" id="destination" name="destination" value="{{ destination }}" placeholder="e.g., LAX or Los Angeles">
+            </div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Filter</button>
+    </form>
+    
+    <h3>Flight Results</h3>
+    
+    {% if flights %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Flight Number</th>
+                <th>Route</th>
+                <th>Departure</th>
+                <th>Arrival</th>
+                <th>Price</th>
+                <th>Status</th>
+                <th>Tickets Sold</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for flight in flights %}
+            <tr>
+                <td>{{ flight.airline_name|e }} {{ flight.flight_number }}</td>
+                <td>{{ flight.departure_city|e }} ({{ flight.departure_airport|e }}) → {{ flight.arrival_city|e }} ({{ flight.arrival_airport|e }})</td>
+                <td>{{ flight.departure_date }} {{ flight.departure_time }}</td>
+                <td>{{ flight.arrival_date }} {{ flight.arrival_time }}</td>
+                <td>${{ "%.2f"|format(flight.base_price) }}</td>
+                <td>
+                    <span class="status status-{{ flight.status|e }}">{{ flight.status|e }}</span>
+                </td>
+                <td>{{ flight.tickets_sold }}</td>
+                <td>
+                    <a href="{{ url_for('staff_view_customers', airline=flight.airline_name, flight_number=flight.flight_number, departure_date=flight.departure_date, departure_time=flight.departure_time) }}" class="btn btn-small">View Customers</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No flights found matching your criteria.</p>
+    {% endif %}
+</div>
+{% endblock %}
+

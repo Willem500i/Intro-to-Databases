@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="dashboard">
-    <h2>Welcome, {{ session.name }}!</h2>
+    <h2>Welcome, {{ session.name|e }}!</h2>
     
     <div class="dashboard-menu">
         <a href="{{ url_for('view_my_flights') }}" class="btn btn-primary">View My Flights</a>
@@ -29,13 +29,13 @@
         <tbody>
             {% for flight in flights %}
             <tr>
-                <td>{{ flight.airline_name }}</td>
+                <td>{{ flight.airline_name|e }}</td>
                 <td>{{ flight.flight_number }}</td>
-                <td>{{ flight.departure_airport }} ({{ flight.departure_city }}) → {{ flight.arrival_airport }} ({{ flight.arrival_city }})</td>
+                <td>{{ flight.departure_airport|e }} ({{ flight.departure_city|e }}) → {{ flight.arrival_airport|e }} ({{ flight.arrival_city|e }})</td>
                 <td>{{ flight.departure_date }} {{ flight.departure_time }}</td>
                 <td>{{ flight.arrival_date }} {{ flight.arrival_time }}</td>
                 <td>
-                    <span class="status status-{{ flight.status }}">{{ flight.status }}</span>
+                    <span class="status status-{{ flight.status|e }}">{{ flight.status|e }}</span>
                 </td>
                 <td>{{ flight.ticket_id }}</td>
             </tr>

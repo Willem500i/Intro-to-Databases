@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Flight Reviews - Staff{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <h2>Reviews for Flight</h2>
+    
+    {% if flight %}
+    <div class="flight-info">
+        <h3>{{ flight.airline_name|e }} Flight {{ flight.flight_number }}</h3>
+        <p><strong>Route:</strong> {{ flight.departure_city|e }} ({{ flight.departure_airport|e }}) → {{ flight.arrival_city|e }} ({{ flight.arrival_airport|e }})</p>
+        <p><strong>Departure:</strong> {{ flight.departure_date }} {{ flight.departure_time }}</p>
+        <p><strong>Arrival:</strong> {{ flight.arrival_date }} {{ flight.arrival_time }}</p>
+        {% if avg_rating %}
+        <p><strong>Average Rating:</strong> <span class="rating">{{ avg_rating }}/5.0</span></p>
+        {% endif %}
+    </div>
+    {% endif %}
+    
+    <div class="dashboard-nav">
+        <a href="{{ url_for('staff_view_ratings') }}" class="btn btn-secondary">Back to Ratings</a>
+    </div>
+    
+    <h3>Customer Reviews ({{ reviews|length }})</h3>
+    
+    {% if reviews %}
+    <div class="reviews-list">
+        {% for review in reviews %}
+        <div class="review-card">
+            <div class="review-header">
+                <strong>{{ review.customer_name|e }}</strong>
+                <span class="rating">Rating: {{ review.rating }}/5</span>
+            </div>
+            {% if review.comment %}
+            <div class="review-comment">
+                <p>{{ review.comment|e }}</p>
+            </div>
+            {% else %}
+            <div class="review-comment">
+                <p><em>No comment provided</em></p>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>No reviews for this flight yet.</p>
+    {% endif %}
+</div>
+{% endblock %}
+

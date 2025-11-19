@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Add Airplane - Staff{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <h2>Add New Airplane</h2>
+    
+    <div class="dashboard-nav">
+        <a href="{{ url_for('staff_home') }}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+    
+    <h3>Add Airplane Form</h3>
+    <form method="POST" class="form">
+        <div class="form-group">
+            <label for="id_number">Airplane ID Number:</label>
+            <input type="number" id="id_number" name="id_number" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="num_seats">Number of Seats:</label>
+            <input type="number" id="num_seats" name="num_seats" min="1" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="manufacturer">Manufacturer:</label>
+            <input type="text" id="manufacturer" name="manufacturer" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="age">Age (years):</label>
+            <input type="number" id="age" name="age" min="0" required>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Add Airplane</button>
+    </form>
+    
+    <h3>All Airplanes for {{ session.airline_name|e }}</h3>
+    
+    {% if airplanes %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>ID Number</th>
+                <th>Number of Seats</th>
+                <th>Manufacturer</th>
+                <th>Age (years)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for airplane in airplanes %}
+            <tr>
+                <td>{{ airplane.id_number }}</td>
+                <td>{{ airplane.num_seats }}</td>
+                <td>{{ airplane.manufacturer|e }}</td>
+                <td>{{ airplane.age }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No airplanes registered yet.</p>
+    {% endif %}
+</div>
+{% endblock %}
+

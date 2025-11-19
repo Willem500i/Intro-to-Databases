@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}View Reports - Staff{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <h2>Ticket Sales Reports - {{ session.airline_name|e }}</h2>
+    
+    <div class="dashboard-nav">
+        <a href="{{ url_for('staff_home') }}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+    
+    <h3>Generate Report</h3>
+    <form method="POST" class="form">
+        <div class="form-group">
+            <label for="report_type">Report Type:</label>
+            <select id="report_type" name="report_type" required onchange="toggleDateRange()">
+                <option value="date_range" {% if report_type == 'date_range' %}selected{% endif %}>Date Range</option>
+                <option value="last_month" {% if report_type == 'last_month' %}selected{% endif %}>Last Month</option>
+                <option value="last_year" {% if report_type == 'last_year' %}selected{% endif %}>Last Year</option>
+            </select>
+        </div>
+        
+        <div class="form-row" id="date-range-fields">
+            <div class="form-group">
+                <label for="start_date">Start Date:</label>
+                <input type="date" id="start_date" name="start_date" value="{{ start_date }}">
+            </div>
+            
+            <div class="form-group">
+                <label for="end_date">End Date:</label>
+                <input type="date" id="end_date" name="end_date" value="{{ end_date }}">
+            </div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Generate Report</button>
+    </form>
+    
+    {% if report_data %}
+    <h3>Report Results</h3>
+    
+    <div class="report-summary">
+        <p><strong>Total Tickets Sold:</strong> {{ total_tickets }}</p>
+        <p><strong>Total Revenue:</strong> ${{ "%.2f"|format(total_revenue) }}</p>
+    </div>
+    
+    <table class="data-table">
+        <thead>
+            <tr>
+                {% if report_type == 'last_year' %}
+                <th>Month</th>
+                <th>Year</th>
+                {% else %}
+                <th>Date</th>
+                {% endif %}
+                <th>Tickets Sold</th>
+                <th>Revenue</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in report_data %}
+            <tr>
+                {% if report_type == 'last_year' %}
+                <td>{{ row.month }}</td>
+                <td>{{ row.year }}</td>
+                {% else %}
+                <td>{{ row.purchase_date }}</td>
+                {% endif %}
+                <td>{{ row.tickets_sold }}</td>
+                <td>${{ "%.2f"|format(row.total_revenue or 0) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    {% if report_data and report_data|length > 0 %}
+    <div class="chart-container">
+        <canvas id="salesChart" width="400" height="200"></canvas>
+    </div>
+    {% endif %}
+    {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+function toggleDateRange() {
+    const reportTypeSelect = document.getElementById('report_type');
+    const dateRangeFields = document.getElementById('date-range-fields');
+    if (reportTypeSelect && dateRangeFields) {
+        const reportType = reportTypeSelect.value;
+        if (reportType === 'date_range') {
+            dateRangeFields.style.display = 'flex';
+        } else {
+            dateRangeFields.style.display = 'none';
+        }
+    }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    toggleDateRange();
+});
+
+{% if report_data and report_data|length > 0 %}
+// Initialize chart
+const ctx = document.getElementById('salesChart');
+if (ctx) {
+    const labels = [
+        {% if report_type == 'last_year' %}
+            {% for row in report_data %}
+            '{{ row.month }}/{{ row.year }}'{% if not loop.last %},{% endif %}
+            {% endfor %}
+        {% else %}
+            {% for row in report_data %}
+            '{{ row.purchase_date }}'{% if not loop.last %},{% endif %}
+            {% endfor %}
+        {% endif %}
+    ];
+    const data = [
+        {% for row in report_data %}
+        {{ row.tickets_sold }}{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    new Chart(ctx.getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Tickets Sold',
+                data: data,
+                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+{% endif %}
+</script>
+{% endblock %}
+

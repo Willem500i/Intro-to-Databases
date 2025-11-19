@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Staff Dashboard - Air Ticket Reservation System{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <h2>Staff Dashboard - {{ session.airline_name|e }}</h2>
+    <p>Welcome, {{ session.name|e }}! Here are the flights for the next 30 days.</p>
+    
+    <div class="dashboard-nav">
+        <a href="{{ url_for('staff_view_flights') }}" class="btn btn-secondary">View All Flights</a>
+        <a href="{{ url_for('staff_create_flight') }}" class="btn btn-primary">Create New Flight</a>
+        <a href="{{ url_for('staff_change_status') }}" class="btn btn-secondary">Change Flight Status</a>
+        <a href="{{ url_for('staff_add_airplane') }}" class="btn btn-secondary">Add Airplane</a>
+        <a href="{{ url_for('staff_view_ratings') }}" class="btn btn-secondary">View Ratings</a>
+        <a href="{{ url_for('staff_view_reports') }}" class="btn btn-secondary">View Reports</a>
+    </div>
+    
+    <h3>Upcoming Flights (Next 30 Days)</h3>
+    
+    {% if flights %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Flight Number</th>
+                <th>Route</th>
+                <th>Departure</th>
+                <th>Arrival</th>
+                <th>Price</th>
+                <th>Status</th>
+                <th>Tickets Sold</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for flight in flights %}
+            <tr>
+                <td>{{ flight.airline_name|e }} {{ flight.flight_number }}</td>
+                <td>{{ flight.departure_city|e }} ({{ flight.departure_airport|e }}) → {{ flight.arrival_city|e }} ({{ flight.arrival_airport|e }})</td>
+                <td>{{ flight.departure_date }} {{ flight.departure_time }}</td>
+                <td>{{ flight.arrival_date }} {{ flight.arrival_time }}</td>
+                <td>${{ "%.2f"|format(flight.base_price) }}</td>
+                <td>
+                    <span class="status status-{{ flight.status|e }}">{{ flight.status|e }}</span>
+                </td>
+                <td>{{ flight.tickets_sold }}</td>
+                <td>
+                    <a href="{{ url_for('staff_view_customers', airline=flight.airline_name, flight_number=flight.flight_number, departure_date=flight.departure_date, departure_time=flight.departure_time) }}" class="btn btn-small">View Customers</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No flights scheduled for the next 30 days.</p>
+    {% endif %}
+</div>
+{% endblock %}
+

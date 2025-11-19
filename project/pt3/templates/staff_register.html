@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Staff Registration - Air Ticket Reservation System{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Airline Staff Registration</h2>
+    
+    <form method="POST" class="form">
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="password_confirm">Confirm Password:</label>
+            <input type="password" id="password_confirm" name="password_confirm" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="name_first">First Name:</label>
+            <input type="text" id="name_first" name="name_first" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="name_last">Last Name:</label>
+            <input type="text" id="name_last" name="name_last" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="date_of_birth">Date of Birth:</label>
+            <input type="date" id="date_of_birth" name="date_of_birth">
+        </div>
+        
+        <div class="form-group">
+            <label for="airline_name">Airline:</label>
+            <select id="airline_name" name="airline_name" required>
+                <option value="">Select an airline</option>
+                {% for airline in airlines %}
+                <option value="{{ airline.name|e }}">{{ airline.name|e }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Register</button>
+    </form>
+    
+    <p class="form-footer">
+        Already have an account? <a href="{{ url_for('staff_login') }}">Login here</a>
+    </p>
+</div>
+{% endblock %}
+

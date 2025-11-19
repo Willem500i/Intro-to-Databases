@@ -1,36 +1,145 @@
 {% extends "base.html" %}
 
-{% block title %}Customer Registration - Air Ticket Reservation System{% endblock %}
+{% block title %}Register - Air Ticket Reservation System{% endblock %}
 
 {% block content %}
 <div class="form-container">
-    <h2>Customer Registration</h2>
+    <h2>Register</h2>
     
-    <form method="POST" action="{{ url_for('customer_register') }}">
+    <form method="POST" class="form" id="register-form">
         <div class="form-group">
-            <label for="email">Email:</label>
-            <input type="email" name="email" id="email" required>
+            <label for="user_type">I am a:</label>
+            <select id="user_type" name="user_type" required onchange="toggleUserType()">
+                <option value="">Select user type</option>
+                <option value="customer">Customer</option>
+                <option value="staff">Airline Staff</option>
+            </select>
         </div>
         
-        <div class="form-group">
-            <label for="name">Full Name:</label>
-            <input type="text" name="name" id="name" required>
+        <!-- Customer Registration Fields -->
+        <div id="customer-fields" style="display: none;">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" placeholder="Used as username">
+            </div>
+            
+            <div class="form-group">
+                <label for="name">Full Name:</label>
+                <input type="text" id="name" name="name">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password">
+            </div>
+            
+            <div class="form-group">
+                <label for="password_confirm">Confirm Password:</label>
+                <input type="password" id="password_confirm" name="password_confirm">
+            </div>
         </div>
         
-        <div class="form-group">
-            <label for="password">Password:</label>
-            <input type="password" name="password" id="password" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="password_confirm">Confirm Password:</label>
-            <input type="password" name="password_confirm" id="password_confirm" required>
+        <!-- Staff Registration Fields -->
+        <div id="staff-fields" style="display: none;">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username">
+            </div>
+            
+            <div class="form-group">
+                <label for="password_staff">Password:</label>
+                <input type="password" id="password_staff" name="password">
+            </div>
+            
+            <div class="form-group">
+                <label for="password_confirm_staff">Confirm Password:</label>
+                <input type="password" id="password_confirm_staff" name="password_confirm">
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="name_first">First Name:</label>
+                    <input type="text" id="name_first" name="name_first">
+                </div>
+                
+                <div class="form-group">
+                    <label for="name_last">Last Name:</label>
+                    <input type="text" id="name_last" name="name_last">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="date_of_birth">Date of Birth:</label>
+                <input type="date" id="date_of_birth" name="date_of_birth">
+            </div>
+            
+            <div class="form-group">
+                <label for="airline_name">Airline:</label>
+                <select id="airline_name" name="airline_name">
+                    <option value="">Select an airline</option>
+                    {% for airline in airlines %}
+                    <option value="{{ airline.name|e }}">{{ airline.name|e }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="email_staff">Email:</label>
+                <input type="email" id="email_staff" name="email">
+            </div>
         </div>
         
         <button type="submit" class="btn btn-primary">Register</button>
     </form>
     
-    <p>Already have an account? <a href="{{ url_for('customer_login') }}">Login here</a></p>
+    <p class="form-footer">
+        Already have an account? <a href="{{ url_for('login') }}">Login here</a>
+    </p>
 </div>
-{% endblock %}
 
+<script>
+function toggleUserType() {
+    const userType = document.getElementById('user_type').value;
+    const customerFields = document.getElementById('customer-fields');
+    const staffFields = document.getElementById('staff-fields');
+    
+    if (userType === 'customer') {
+        customerFields.style.display = 'block';
+        staffFields.style.display = 'none';
+        // Make customer fields required
+        document.getElementById('email').required = true;
+        document.getElementById('name').required = true;
+        document.getElementById('password').required = true;
+        document.getElementById('password_confirm').required = true;
+        // Make staff fields not required
+        document.getElementById('username').required = false;
+        document.getElementById('password_staff').required = false;
+        document.getElementById('password_confirm_staff').required = false;
+        document.getElementById('name_first').required = false;
+        document.getElementById('name_last').required = false;
+        document.getElementById('airline_name').required = false;
+        document.getElementById('email_staff').required = false;
+        document.getElementById('date_of_birth').required = false;
+    } else if (userType === 'staff') {
+        customerFields.style.display = 'none';
+        staffFields.style.display = 'block';
+        // Make staff fields required
+        document.getElementById('username').required = true;
+        document.getElementById('password_staff').required = true;
+        document.getElementById('password_confirm_staff').required = true;
+        document.getElementById('name_first').required = true;
+        document.getElementById('name_last').required = true;
+        document.getElementById('airline_name').required = true;
+        document.getElementById('email_staff').required = true;
+        // Make customer fields not required
+        document.getElementById('email').required = false;
+        document.getElementById('name').required = false;
+        document.getElementById('password').required = false;
+        document.getElementById('password_confirm').required = false;
+    } else {
+        customerFields.style.display = 'none';
+        staffFields.style.display = 'none';
+    }
+}
+</script>
+{% endblock %}

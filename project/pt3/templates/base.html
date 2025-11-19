@@ -15,9 +15,14 @@
                     <span>Welcome, {{ session.name|e }}</span>
                     <a href="{{ url_for('customer_home') }}">Dashboard</a>
                     <a href="{{ url_for('logout') }}">Logout</a>
+                {% elif session.user_type == 'staff' %}
+                    <span>Welcome, {{ session.name|e }} (Staff)</span>
+                    <a href="{{ url_for('staff_home') }}">Dashboard</a>
+                    <a href="{{ url_for('logout') }}">Logout</a>
                 {% else %}
                     <a href="{{ url_for('search_flights') }}">Search Flights</a>
-                    <a href="{{ url_for('customer_login') }}">Customer Login</a>
+                    <a href="{{ url_for('login') }}">Login</a>
+                    <a href="{{ url_for('register') }}">Register</a>
                 {% endif %}
             </div>
         </div>

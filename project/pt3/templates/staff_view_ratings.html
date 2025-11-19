@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}View Ratings - Staff{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <h2>Flight Ratings - {{ session.airline_name|e }}</h2>
+    
+    <div class="dashboard-nav">
+        <a href="{{ url_for('staff_home') }}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+    
+    <h3>All Flights with Ratings</h3>
+    
+    {% if flights %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Flight Number</th>
+                <th>Route</th>
+                <th>Departure</th>
+                <th>Average Rating</th>
+                <th>Number of Reviews</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for flight in flights %}
+            <tr>
+                <td>{{ flight.airline_name|e }} {{ flight.flight_number }}</td>
+                <td>{{ flight.departure_city|e }} ({{ flight.departure_airport|e }}) → {{ flight.arrival_city|e }} ({{ flight.arrival_airport|e }})</td>
+                <td>{{ flight.departure_date }} {{ flight.departure_time }}</td>
+                <td>
+                    {% if flight.avg_rating %}
+                        <span class="rating">{{ "%.1f"|format(flight.avg_rating) }}/5.0</span>
+                    {% else %}
+                        <span>No ratings yet</span>
+                    {% endif %}
+                </td>
+                <td>{{ flight.num_reviews or 0 }}</td>
+                <td>
+                    {% if flight.num_reviews and flight.num_reviews > 0 %}
+                    <a href="{{ url_for('staff_view_flight_reviews', airline=flight.airline_name, flight_number=flight.flight_number, departure_date=flight.departure_date, departure_time=flight.departure_time) }}" class="btn btn-small">View Reviews</a>
+                    {% else %}
+                    <span>No reviews</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No flights found.</p>
+    {% endif %}
+</div>
+{% endblock %}
+
