@@ -7,6 +7,7 @@ def get_db_connection():
     try:
         connection = mysql.connector.connect(
             host=Config.MYSQL_HOST,
+            port=Config.MYSQL_PORT,
             user=Config.MYSQL_USER,
             password=Config.MYSQL_PASSWORD,
             database=Config.MYSQL_DATABASE
@@ -14,6 +15,7 @@ def get_db_connection():
         return connection
     except Error as e:
         print(f"Error connecting to MySQL: {e}")
+        print(f"Attempted connection to: {Config.MYSQL_USER}@{Config.MYSQL_HOST}:{Config.MYSQL_PORT}/{Config.MYSQL_DATABASE}")
         return None
 
 def execute_query(query, params=None, fetch=True):
