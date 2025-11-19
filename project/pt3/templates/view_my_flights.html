@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}View My Flights - Air Ticket Reservation System{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <h2>View My Flights</h2>
+    
+    <div class="filter-section">
+        <h3>Filter Flights</h3>
+        <form method="POST" action="{{ url_for('view_my_flights') }}">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="flight_type">Flight Type:</label>
+                    <select name="flight_type" id="flight_type">
+                        <option value="future" {% if flight_type == 'future' %}selected{% endif %}>Future Flights</option>
+                        <option value="past" {% if flight_type == 'past' %}selected{% endif %}>Past Flights</option>
+                        <option value="all" {% if flight_type == 'all' %}selected{% endif %}>All Flights</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="start_date">Start Date:</label>
+                    <input type="date" name="start_date" id="start_date" value="{{ start_date }}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="end_date">End Date:</label>
+                    <input type="date" name="end_date" id="end_date" value="{{ end_date }}">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="source">Source (Airport/City):</label>
+                    <input type="text" name="source" id="source" value="{{ source }}" placeholder="e.g., JFK or New York">
+                </div>
+                
+                <div class="form-group">
+                    <label for="destination">Destination (Airport/City):</label>
+                    <input type="text" name="destination" id="destination" value="{{ destination }}" placeholder="e.g., LAX or Los Angeles">
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Filter</button>
+            <a href="{{ url_for('view_my_flights') }}" class="btn">Clear Filters</a>
+        </form>
+    </div>
+    
+    <h3>My Flights</h3>
+    {% if flights %}
+    <table class="flight-table">
+        <thead>
+            <tr>
+                <th>Airline</th>
+                <th>Flight #</th>
+                <th>Route</th>
+                <th>Departure</th>
+                <th>Arrival</th>
+                <th>Status</th>
+                <th>Ticket ID</th>
+                <th>Purchase Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for flight in flights %}
+            <tr>
+                <td>{{ flight.airline_name }}</td>
+                <td>{{ flight.flight_number }}</td>
+                <td>{{ flight.departure_airport }} ({{ flight.departure_city }}) → {{ flight.arrival_airport }} ({{ flight.arrival_city }})</td>
+                <td>{{ flight.departure_date }} {{ flight.departure_time }}</td>
+                <td>{{ flight.arrival_date }} {{ flight.arrival_time }}</td>
+                <td>
+                    <span class="status status-{{ flight.status }}">{{ flight.status }}</span>
+                </td>
+                <td>{{ flight.ticket_id }}</td>
+                <td>{{ flight.purchase_date }} {{ flight.purchase_time }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No flights found matching your criteria.</p>
+    {% endif %}
+    
+    <p><a href="{{ url_for('customer_home') }}" class="btn">Back to Dashboard</a></p>
+</div>
+{% endblock %}
+

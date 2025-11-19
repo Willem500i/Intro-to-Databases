@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}My Reviews - Air Ticket Reservation System{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <h2>My Reviews</h2>
+    <p>Rate and comment on flights you have already taken.</p>
+    
+    {% if flights %}
+    <div class="reviews-list">
+        {% for flight in flights %}
+        <div class="review-item">
+            <div class="flight-info">
+                <h4>Flight {{ flight.airline_name }} {{ flight.flight_number }}</h4>
+                <p><strong>Route:</strong> {{ flight.departure_airport }} ({{ flight.departure_city }}) → {{ flight.arrival_airport }} ({{ flight.arrival_city }})</p>
+                <p><strong>Date:</strong> {{ flight.departure_date }} {{ flight.departure_time }}</p>
+                
+                {% if flight.rating %}
+                <div class="existing-review">
+                    <p><strong>Your Rating:</strong> {{ flight.rating }}/5</p>
+                    <p><strong>Your Comment:</strong> {{ flight.comment|e }}</p>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="review-form">
+                <form method="POST" action="{{ url_for('customer_reviews') }}">
+                    <input type="hidden" name="flight_airline" value="{{ flight.airline_name }}">
+                    <input type="hidden" name="flight_number" value="{{ flight.flight_number }}">
+                    <input type="hidden" name="flight_departure_date" value="{{ flight.departure_date }}">
+                    <input type="hidden" name="flight_departure_time" value="{{ flight.departure_time }}">
+                    
+                    <div class="form-group">
+                        <label for="rating_{{ flight.flight_number }}">Rating (1-5):</label>
+                        <select name="rating" id="rating_{{ flight.flight_number }}" required>
+                            <option value="">Select rating</option>
+                            <option value="1" {% if flight.rating == 1 %}selected{% endif %}>1 - Poor</option>
+                            <option value="2" {% if flight.rating == 2 %}selected{% endif %}>2 - Fair</option>
+                            <option value="3" {% if flight.rating == 3 %}selected{% endif %}>3 - Good</option>
+                            <option value="4" {% if flight.rating == 4 %}selected{% endif %}>4 - Very Good</option>
+                            <option value="5" {% if flight.rating == 5 %}selected{% endif %}>5 - Excellent</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="comment_{{ flight.flight_number }}">Comment:</label>
+                        <textarea name="comment" id="comment_{{ flight.flight_number }}" rows="3">{{ flight.comment|e if flight.comment else '' }}</textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        {% if flight.rating %}Update Review{% else %}Submit Review{% endif %}
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>You have no past flights to review yet.</p>
+    {% endif %}
+    
+    <p><a href="{{ url_for('customer_home') }}" class="btn">Back to Dashboard</a></p>
+</div>
+{% endblock %}
+

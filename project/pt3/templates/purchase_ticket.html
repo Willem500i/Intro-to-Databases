@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Purchase Ticket - Air Ticket Reservation System{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Purchase Ticket</h2>
+    
+    <div class="flight-info">
+        <h3>Flight Details</h3>
+        <p><strong>Airline:</strong> {{ flight.airline_name }}</p>
+        <p><strong>Flight Number:</strong> {{ flight.flight_number }}</p>
+        <p><strong>Route:</strong> {{ flight.departure_airport }} ({{ flight.departure_city }}) → {{ flight.arrival_airport }} ({{ flight.arrival_city }})</p>
+        <p><strong>Departure:</strong> {{ flight.departure_date }} {{ flight.departure_time }}</p>
+        <p><strong>Arrival:</strong> {{ flight.arrival_date }} {{ flight.arrival_time }}</p>
+        <p><strong>Price:</strong> ${{ "%.2f"|format(flight.base_price) }}</p>
+        <p><strong>Status:</strong> <span class="status status-{{ flight.status }}">{{ flight.status }}</span></p>
+        <p><strong>Available Seats:</strong> {{ available_seats }}</p>
+    </div>
+    
+    <form method="POST" action="{{ url_for('purchase_ticket', 
+        airline=flight.airline_name, 
+        flight_number=flight.flight_number, 
+        departure_date=flight.departure_date, 
+        departure_time=flight.departure_time) }}">
+        
+        <h3>Payment Information</h3>
+        
+        <div class="form-group">
+            <label for="card_type">Card Type:</label>
+            <select name="card_type" id="card_type" required>
+                <option value="">Select card type</option>
+                <option value="credit">Credit Card</option>
+                <option value="debit">Debit Card</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="card_number">Card Number:</label>
+            <input type="text" name="card_number" id="card_number" required maxlength="20">
+        </div>
+        
+        <div class="form-group">
+            <label for="card_name">Name on Card:</label>
+            <input type="text" name="card_name" id="card_name" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="card_expiry_month">Card Expiry:</label>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <select name="card_expiry_month" id="card_expiry_month" required style="flex: 1;">
+                    <option value="">Month</option>
+                    <option value="01">January</option>
+                    <option value="02">February</option>
+                    <option value="03">March</option>
+                    <option value="04">April</option>
+                    <option value="05">May</option>
+                    <option value="06">June</option>
+                    <option value="07">July</option>
+                    <option value="08">August</option>
+                    <option value="09">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+                <select name="card_expiry_year" id="card_expiry_year" required style="flex: 1;">
+                    <option value="">Year</option>
+                    {% for year in range(2025, 2035) %}
+                    <option value="{{ year }}">{{ year }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Purchase Ticket</button>
+        <a href="{{ url_for('search_flights') }}" class="btn">Cancel</a>
+    </form>
+</div>
+{% endblock %}
+

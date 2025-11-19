@@ -20,6 +20,9 @@
                 <th>Date</th>
                 <th>Price</th>
                 <th>Status</th>
+                {% if session.user_type == 'customer' %}
+                <th>Action</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -40,6 +43,16 @@
                 <td>
                     <span class="status status-{{ flight.status }}">{{ flight.status }}</span>
                 </td>
+                {% if session.user_type == 'customer' %}
+                <td>
+                    <a href="{{ url_for('purchase_ticket', 
+                        airline=flight.airline_name, 
+                        flight_number=flight.flight_number, 
+                        departure_date=flight.departure_date, 
+                        departure_time=flight.departure_time) }}" 
+                       class="btn btn-small">Purchase</a>
+                </td>
+                {% endif %}
             </tr>
             {% endfor %}
         </tbody>
@@ -48,6 +61,11 @@
     <p>No flights found matching your criteria.</p>
     {% endif %}
     
-    <p><a href="{{ url_for('search_flights') }}" class="btn">New Search</a></p>
+    <p>
+        <a href="{{ url_for('search_flights') }}" class="btn">New Search</a>
+        {% if session.user_type == 'customer' %}
+        <a href="{{ url_for('customer_home') }}" class="btn">Back to Dashboard</a>
+        {% endif %}
+    </p>
 </div>
 {% endblock %}
