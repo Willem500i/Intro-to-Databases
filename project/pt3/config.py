@@ -6,6 +6,11 @@ class Config:
     # Support both Railway's MYSQL_URL and individual variables
     MYSQL_URL = os.environ.get('MYSQL_URL') or os.environ.get('MySQL.MYSQL_URL')
     
+    # Debug: print what we're getting (remove in production)
+    if not MYSQL_URL:
+        print("WARNING: MYSQL_URL not found in environment variables")
+        print(f"Available env vars with MYSQL: {[k for k in os.environ.keys() if 'MYSQL' in k.upper()]}")
+    
     if MYSQL_URL:
         # Parse MySQL URL: mysql://user:password@host:port/database
         parsed = urlparse(MYSQL_URL)
