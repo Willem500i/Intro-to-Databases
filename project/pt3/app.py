@@ -1075,6 +1075,245 @@ def staff_view_reports():
                          total_tickets=0,
                          total_revenue=0)
 
+@app.route('/admin/dbms', methods=['GET', 'POST'])
+def admin_dbms():
+    """DBMS page to view, add, and delete database entries"""
+    
+    # Handle DELETE request
+    if request.method == 'POST' and request.form.get('action') == 'delete':
+        table_name = request.form.get('table')
+        try:
+            if table_name == 'Airline':
+                name = request.form.get('name')
+                query = "DELETE FROM Airline WHERE name = %s"
+                execute_prepared_query(query, (name,), fetch=False)
+                flash(f'Deleted airline: {name}', 'success')
+            elif table_name == 'Airport':
+                airport_code = request.form.get('airport_code')
+                query = "DELETE FROM Airport WHERE airport_code = %s"
+                execute_prepared_query(query, (airport_code,), fetch=False)
+                flash(f'Deleted airport: {airport_code}', 'success')
+            elif table_name == 'Airplane':
+                airline_name = request.form.get('airline_name')
+                id_number = request.form.get('id_number')
+                query = "DELETE FROM Airplane WHERE airline_name = %s AND id_number = %s"
+                execute_prepared_query(query, (airline_name, id_number), fetch=False)
+                flash(f'Deleted airplane: {airline_name} #{id_number}', 'success')
+            elif table_name == 'Flight':
+                airline_name = request.form.get('airline_name')
+                flight_number = request.form.get('flight_number')
+                departure_date = request.form.get('departure_date')
+                departure_time = request.form.get('departure_time')
+                query = """DELETE FROM Flight WHERE airline_name = %s AND flight_number = %s 
+                          AND departure_date = %s AND departure_time = %s"""
+                execute_prepared_query(query, (airline_name, flight_number, departure_date, departure_time), fetch=False)
+                flash(f'Deleted flight: {airline_name} {flight_number}', 'success')
+            elif table_name == 'Customer':
+                customer_email = request.form.get('customer_email')
+                query = "DELETE FROM Customer WHERE customer_email = %s"
+                execute_prepared_query(query, (customer_email,), fetch=False)
+                flash(f'Deleted customer: {customer_email}', 'success')
+            elif table_name == 'AirlineStaff':
+                username = request.form.get('username')
+                query = "DELETE FROM AirlineStaff WHERE username = %s"
+                execute_prepared_query(query, (username,), fetch=False)
+                flash(f'Deleted staff: {username}', 'success')
+            elif table_name == 'Ticket':
+                ticket_id = request.form.get('ticket_id')
+                query = "DELETE FROM Ticket WHERE ticket_id = %s"
+                execute_prepared_query(query, (ticket_id,), fetch=False)
+                flash(f'Deleted ticket: {ticket_id}', 'success')
+            elif table_name == 'Review':
+                customer_email = request.form.get('customer_email')
+                flight_airline = request.form.get('flight_airline')
+                flight_number = request.form.get('flight_number')
+                flight_departure_date = request.form.get('flight_departure_date')
+                flight_departure_time = request.form.get('flight_departure_time')
+                query = """DELETE FROM Review WHERE customer_email = %s AND flight_airline = %s 
+                          AND flight_number = %s AND flight_departure_date = %s AND flight_departure_time = %s"""
+                execute_prepared_query(query, (customer_email, flight_airline, flight_number, 
+                                             flight_departure_date, flight_departure_time), fetch=False)
+                flash(f'Deleted review', 'success')
+        except Exception as e:
+            flash(f'Error deleting: {str(e)}', 'error')
+    
+    # Handle INSERT request
+    if request.method == 'POST' and request.form.get('action') == 'insert':
+        table_name = request.form.get('table')
+        try:
+            if table_name == 'Airline':
+                name = request.form.get('name')
+                query = "INSERT INTO Airline (name) VALUES (%s)"
+                execute_prepared_query(query, (name,), fetch=False)
+                flash(f'Added airline: {name}', 'success')
+            elif table_name == 'Airport':
+                airport_code = request.form.get('airport_code')
+                city = request.form.get('city')
+                country = request.form.get('country')
+                airport_type = request.form.get('airport_type')
+                query = "INSERT INTO Airport (airport_code, city, country, airport_type) VALUES (%s, %s, %s, %s)"
+                execute_prepared_query(query, (airport_code, city, country, airport_type), fetch=False)
+                flash(f'Added airport: {airport_code}', 'success')
+            elif table_name == 'Airplane':
+                airline_name = request.form.get('airline_name')
+                id_number = request.form.get('id_number')
+                num_seats = request.form.get('num_seats')
+                manufacturer = request.form.get('manufacturer')
+                age = request.form.get('age')
+                query = "INSERT INTO Airplane (airline_name, id_number, num_seats, manufacturer, age) VALUES (%s, %s, %s, %s, %s)"
+                execute_prepared_query(query, (airline_name, id_number, num_seats, manufacturer, age), fetch=False)
+                flash(f'Added airplane: {airline_name} #{id_number}', 'success')
+            elif table_name == 'Flight':
+                airline_name = request.form.get('airline_name')
+                flight_number = request.form.get('flight_number')
+                departure_airport = request.form.get('departure_airport')
+                departure_date = request.form.get('departure_date')
+                departure_time = request.form.get('departure_time')
+                arrival_airport = request.form.get('arrival_airport')
+                arrival_date = request.form.get('arrival_date')
+                arrival_time = request.form.get('arrival_time')
+                base_price = request.form.get('base_price')
+                status = request.form.get('status', 'on-time')
+                airplane_id = request.form.get('airplane_id')
+                query = """INSERT INTO Flight (airline_name, flight_number, departure_airport, departure_date, 
+                          departure_time, arrival_airport, arrival_date, arrival_time, base_price, status, airplane_id) 
+                          VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+                execute_prepared_query(query, (airline_name, flight_number, departure_airport, departure_date,
+                                             departure_time, arrival_airport, arrival_date, arrival_time,
+                                             base_price, status, airplane_id), fetch=False)
+                flash(f'Added flight: {airline_name} {flight_number}', 'success')
+            elif table_name == 'Customer':
+                customer_email = request.form.get('customer_email')
+                name = request.form.get('name')
+                password = request.form.get('password')
+                password_hash = hashlib.md5(password.encode()).hexdigest()
+                building_number = request.form.get('building_number') or None
+                street = request.form.get('street') or None
+                city = request.form.get('city') or None
+                state = request.form.get('state') or None
+                phone_number = request.form.get('phone_number') or None
+                passport_number = request.form.get('passport_number') or None
+                passport_expiration = request.form.get('passport_expiration') or None
+                passport_country = request.form.get('passport_country') or None
+                date_of_birth = request.form.get('date_of_birth') or None
+                query = """INSERT INTO Customer (customer_email, name, password, building_number, street, city, 
+                          state, phone_number, passport_number, passport_expiration, passport_country, date_of_birth) 
+                          VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+                execute_prepared_query(query, (customer_email, name, password_hash, building_number, street, city,
+                                             state, phone_number, passport_number, passport_expiration,
+                                             passport_country, date_of_birth), fetch=False)
+                flash(f'Added customer: {customer_email}', 'success')
+            elif table_name == 'AirlineStaff':
+                username = request.form.get('username')
+                password = request.form.get('password')
+                password_hash = hashlib.md5(password.encode()).hexdigest()
+                name_first = request.form.get('name_first')
+                name_last = request.form.get('name_last')
+                date_of_birth = request.form.get('date_of_birth') or None
+                airline_name = request.form.get('airline_name')
+                email = request.form.get('email')
+                query = """INSERT INTO AirlineStaff (username, password, name_first, name_last, 
+                          date_of_birth, airline_name, email) VALUES (%s, %s, %s, %s, %s, %s, %s)"""
+                execute_prepared_query(query, (username, password_hash, name_first, name_last,
+                                             date_of_birth, airline_name, email), fetch=False)
+                flash(f'Added staff: {username}', 'success')
+            elif table_name == 'Ticket':
+                customer_email = request.form.get('customer_email')
+                flight_airline = request.form.get('flight_airline')
+                flight_number = request.form.get('flight_number')
+                flight_departure_date = request.form.get('flight_departure_date')
+                flight_departure_time = request.form.get('flight_departure_time')
+                card_type = request.form.get('card_type')
+                card_number = request.form.get('card_number')
+                card_name = request.form.get('card_name')
+                card_expiry = request.form.get('card_expiry')
+                purchase_date = request.form.get('purchase_date')
+                purchase_time = request.form.get('purchase_time')
+                if not purchase_date or not purchase_time:
+                    query = """INSERT INTO Ticket (customer_email, flight_airline, flight_number, 
+                              flight_departure_date, flight_departure_time, card_type, card_number, 
+                              card_name, card_expiry, purchase_date, purchase_time) 
+                              VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, CURDATE(), CURTIME())"""
+                    execute_prepared_query(query, (customer_email, flight_airline, flight_number,
+                                                 flight_departure_date, flight_departure_time, card_type,
+                                                 card_number, card_name, card_expiry), fetch=False)
+                else:
+                    query = """INSERT INTO Ticket (customer_email, flight_airline, flight_number, 
+                              flight_departure_date, flight_departure_time, card_type, card_number, 
+                              card_name, card_expiry, purchase_date, purchase_time) 
+                              VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+                    execute_prepared_query(query, (customer_email, flight_airline, flight_number,
+                                                 flight_departure_date, flight_departure_time, card_type,
+                                                 card_number, card_name, card_expiry, purchase_date, purchase_time), fetch=False)
+                flash(f'Added ticket', 'success')
+            elif table_name == 'Review':
+                customer_email = request.form.get('customer_email')
+                flight_airline = request.form.get('flight_airline')
+                flight_number = request.form.get('flight_number')
+                flight_departure_date = request.form.get('flight_departure_date')
+                flight_departure_time = request.form.get('flight_departure_time')
+                rating = request.form.get('rating')
+                comment = request.form.get('comment') or None
+                query = """INSERT INTO Review (customer_email, flight_airline, flight_number, 
+                          flight_departure_date, flight_departure_time, rating, comment) 
+                          VALUES (%s, %s, %s, %s, %s, %s, %s)"""
+                execute_prepared_query(query, (customer_email, flight_airline, flight_number,
+                                             flight_departure_date, flight_departure_time, rating, comment), fetch=False)
+                flash(f'Added review', 'success')
+        except Exception as e:
+            flash(f'Error inserting: {str(e)}', 'error')
+    
+    # Fetch all table data
+    tables_data = {}
+    table_queries = {
+        'Airline': 'SELECT * FROM Airline ORDER BY name',
+        'Airport': 'SELECT * FROM Airport ORDER BY airport_code',
+        'Airplane': 'SELECT * FROM Airplane ORDER BY airline_name, id_number',
+        'Flight': '''SELECT f.*, a1.city as departure_city, a2.city as arrival_city 
+                     FROM Flight f 
+                     JOIN Airport a1 ON f.departure_airport = a1.airport_code
+                     JOIN Airport a2 ON f.arrival_airport = a2.airport_code
+                     ORDER BY f.departure_date, f.departure_time''',
+        'Customer': 'SELECT customer_email, name, building_number, street, city, state, phone_number, passport_number, passport_expiration, passport_country, date_of_birth FROM Customer ORDER BY customer_email',
+        'AirlineStaff': '''SELECT s.*, GROUP_CONCAT(p.phone_number ORDER BY p.phone_number SEPARATOR ", ") as phone_numbers
+                           FROM AirlineStaff s
+                           LEFT JOIN Phone p ON s.username = p.staff_username
+                           GROUP BY s.username
+                           ORDER BY s.airline_name, s.username''',
+        'Ticket': '''SELECT t.*, c.name as customer_name, f.departure_airport, f.arrival_airport
+                     FROM Ticket t
+                     JOIN Customer c ON t.customer_email = c.customer_email
+                     JOIN Flight f ON t.flight_airline = f.airline_name 
+                         AND t.flight_number = f.flight_number
+                         AND t.flight_departure_date = f.departure_date
+                         AND t.flight_departure_time = f.departure_time
+                     ORDER BY t.ticket_id''',
+        'Review': '''SELECT r.*, c.name as customer_name, f.departure_airport, f.arrival_airport
+                     FROM Review r
+                     JOIN Customer c ON r.customer_email = c.customer_email
+                     JOIN Flight f ON r.flight_airline = f.airline_name 
+                         AND r.flight_number = f.flight_number
+                         AND r.flight_departure_date = f.departure_date
+                         AND r.flight_departure_time = f.departure_time
+                     ORDER BY r.flight_departure_date DESC, r.flight_departure_time DESC'''
+    }
+    
+    # Get reference data for dropdowns
+    airlines = execute_prepared_query("SELECT name FROM Airline ORDER BY name") or []
+    airports = execute_prepared_query("SELECT airport_code, city FROM Airport ORDER BY airport_code") or []
+    customers = execute_prepared_query("SELECT customer_email, name FROM Customer ORDER BY customer_email") or []
+    
+    for table_name, query in table_queries.items():
+        try:
+            data = execute_prepared_query(query)
+            tables_data[table_name] = data or []
+        except Exception as e:
+            tables_data[table_name] = []
+            print(f"Error fetching {table_name}: {e}")
+    
+    return render_template('admin_dbms.html', tables_data=tables_data, 
+                         airlines=airlines, airports=airports, customers=customers)
+
 if __name__ == '__main__':
     import os
     port = int(os.environ.get('PORT', 5000))
